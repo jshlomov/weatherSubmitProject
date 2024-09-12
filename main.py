@@ -2,12 +2,12 @@ from os import stat_result
 
 
 from api.weather_api import get_cities_weather
+from repository.csv_repository1 import write_missions_to_csv
 
 from repository.json_repository import read_target_from_json, read_pilot_from_json, \
     read_aircraft_from_json
 
-from service.mission_sevice import make_all_missions
-
+from service.mission_sevice import make_all_missions, get_top_7_missions
 
 if __name__ == '__main__':
 
@@ -32,5 +32,7 @@ if __name__ == '__main__':
     weathers = get_cities_weather("Weather")
     locations = get_cities_weather("Location")
 
-    li = make_all_missions(targets, pilots, aircrafts, weathers, locations)
-    print(li[0])
+    missions = make_all_missions(targets, pilots, aircrafts, weathers, locations)
+    write_missions_to_csv(missions, "all_missions.csv")
+    li = get_top_7_missions(missions)
+    write_missions_to_csv(li, "top_seven.csv")

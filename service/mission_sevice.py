@@ -10,6 +10,25 @@ from service.score_service import calculate_score
 from service.weather_service import extract_weather_from_json
 
 
+def get_top_7_missions(missions):
+    sorted_missions = sorted(missions, key=lambda m: m.missin_fit_score, reverse=True)
+
+    top_missions = []
+    used_combinations = set()
+
+    for mission in sorted_missions:
+        combination = (mission.target_city, mission.assigned_pilot, mission.assigned_aircraft)
+
+        if combination not in used_combinations:
+            top_missions.append(mission)
+            used_combinations.add(combination)
+
+        if len(top_missions) == 7:
+            break
+
+    return top_missions
+
+
 def make_all_missions(targets, pilots, aircrafts, weathers, locations):
     missions = []
     for target in targets:

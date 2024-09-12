@@ -3,26 +3,27 @@ from model.Pilot import Pilot
 from model.Target import Target
 from model.Weather import Weather
 
-
-
 def calculate_score(pilot: Pilot, target: Target, aircraft: Aircraft, weather: Weather, distance: float):
-    pilot_skill_score = pilot_score(pilot)
-    weather_condition_score = general_weather_score(weather)
-    priority_score_value = priority_score(target)
-    distance_fuel_score = distance_score(aircraft, distance)
+    # Calculate individual scores
+    pilot_skill_score = pilot_score(pilot)  # Score based on pilot's skill
+    weather_condition_score = general_weather_score(weather)  # Score based on weather condition
+    priority_score_value = priority_score(target)  # Score based on target priority
+    distance_fuel_score = distance_score(aircraft, distance)  # Score based on distance and fuel capacity
 
+    # Weights for each factor
     weights = {
         "distance": 0.30,
-        "aircraft_type": 0.25,
+        "priority": 0.25,
         "pilot_skill": 0.25,
         "weather_condition": 0.20,
     }
 
+    # Calculate total score, combining all scores with their respective weights
     total_score = (
         (distance_fuel_score * weights["distance"]) +
         (pilot_skill_score * weights["pilot_skill"]) +
         (weather_condition_score * weights["weather_condition"]) +
-        (aircraft.fuel_capacity * weights["aircraft_type"])
+        (priority_score_value * weights["priority"])
     )
 
     return total_score
@@ -34,7 +35,7 @@ def pilot_score(pilot:Pilot):
 def general_weather_score(weather:Weather):
     weather_condition = weather_score(weather)
     cloud_state = weather.clouds
-    wind_state = weather.wind #more logics
+    wind_state = weather.wind / 12 #0 - 12
     return weather_condition * (1/3) + cloud_state *(1/3) + wind_state * (1/3)
 
 def priority_score(target:Target):
